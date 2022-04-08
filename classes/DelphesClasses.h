@@ -182,6 +182,7 @@ public:
 
   Int_t Index; // vertex index
   Int_t NDF; // number of degrees of freedom
+  Int_t IsPU; // 0 or 1 for particles from pile-up interactions
 
   Double_t Sigma; // vertex position (z component) error
   Double_t SumPT2; // sum pt^2 of tracks attached to the vertex
