@@ -231,6 +231,7 @@ tmp/readers/DelphesHepMC3.$(ObjSuf): \
 	readers/DelphesHepMC3.cpp \
 	classes/DelphesClasses.h \
 	classes/DelphesFactory.h \
+	classes/DelphesHepMC3Reader.h \
 	modules/Delphes.h \
 	external/ExRootAnalysis/ExRootProgressBar.h \
 	external/ExRootAnalysis/ExRootTreeBranch.h \
