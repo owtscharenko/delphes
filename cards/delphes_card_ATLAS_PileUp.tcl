@@ -73,8 +73,8 @@ module PileUpMerger PileUpMerger {
   # average expected pile up
   set MeanPileUp 50
 
-   # maximum spread in the beam direction in m
-  set ZVertexSpread 0.25
+  # maximum spread in the beam direction in m
+  set ZVertexSpread 0.04
 
   # maximum spread in time in s
   set TVertexSpread 800E-12
@@ -731,7 +731,7 @@ module TreeWriter TreeWriter {
 # add Branch InputArray BranchName BranchClass
   add Branch Delphes/allParticles Particle GenParticle
 
-#  add Branch TrackMerger/tracks Track Track
+  add Branch TrackMerger/tracks Track Track
   add Branch Calorimeter/towers Tower Tower
 
 #  add Branch Calorimeter/eflowTracks EFlowTrack Track
