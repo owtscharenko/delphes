@@ -26,9 +26,11 @@ class SimConverter
 
 
     struct simple_vertex {
-        TVector3 pos;
+        Float_t x;
+        Float_t y;
+        Float_t z;
         Float_t time;
-        UInt_t IsPU;
+        Int_t IsPU;
         Int_t vertexID;
         UInt_t ndf;
         Float_t sumpt2;
@@ -36,21 +38,44 @@ class SimConverter
     };
     
     struct simple_track {
-        TVector3 pos;
+        Float_t x;
+        Float_t y;
+        Float_t z;
         Float_t time;
         Float_t eta;
         Float_t phi;
         Float_t PT;
         Float_t P;
         Float_t mass;
-        UInt_t IsPU;
+        Float_t charge;
+        Int_t IsPU;
         Int_t trackID;
         Int_t vertexID;
+        Int_t PID;
+        // Float_t errorP;
+        Float_t GenX;
+        Float_t GenY;
+        Float_t GenZ;
+        Float_t GenMass;
+        Float_t GenCharge;
+        Float_t GenTime;
+        Float_t GenP;
+        Float_t GenPT;
+        Float_t GenEta;
+        Float_t GenPhi;
+        Int_t GenPID;
+        // Float_t errorPT;
+        // Float_t errorPhi;
+        // Float_t errorEta;
     };
 
     struct simple_particle{
-        TVector3 pos;
-        TVector3 mom;
+        Float_t x;
+        Float_t y;
+        Float_t z;;
+        Float_t px;
+        Float_t py;
+        Float_t pz;
         Float_t time;
         Float_t mass;
         Float_t E;
@@ -59,9 +84,9 @@ class SimConverter
         Float_t charge;
         Float_t eta;
         Float_t phi;
-        UInt_t IsPU;
+        Int_t IsPU;
         Int_t PID;
-        std::vector<Int_t> trackID;
+        // std::vector<Int_t> trackID;
         std::vector<Int_t> vertexID;
     };
 
