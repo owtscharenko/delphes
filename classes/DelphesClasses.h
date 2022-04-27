@@ -196,7 +196,7 @@ public:
   static CompBase *fgCompare; //!
   const CompBase *GetCompare() const { return fgCompare; }
 
-  ClassDef(Vertex, 3)
+  ClassDef(Vertex, 4)
 };
 
 //---------------------------------------------------------------------------
