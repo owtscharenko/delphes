@@ -252,6 +252,7 @@ void TreeWriter::ProcessVertices(ExRootTreeBranch *branch, TObjArray *array)
 
   Double_t x, y, z, t, xError, yError, zError, tError, sigma, sumPT2, btvSumPT2, genDeltaZ, genSumPT2;
   UInt_t index, ndf;
+  Int_t IsPileup;
 
   CompBase *compare = Candidate::fgCompare;
   Candidate::fgCompare = CompSumPT2<Candidate>::Instance();
@@ -270,6 +271,7 @@ void TreeWriter::ProcessVertices(ExRootTreeBranch *branch, TObjArray *array)
     btvSumPT2 = candidate->BTVSumPT2;
     genDeltaZ = candidate->GenDeltaZ;
     genSumPT2 = candidate->GenSumPT2;
+    IsPileup = candidate->IsPU;
 
     x = candidate->Position.X();
     y = candidate->Position.Y();
@@ -283,6 +285,7 @@ void TreeWriter::ProcessVertices(ExRootTreeBranch *branch, TObjArray *array)
 
     entry = static_cast<Vertex *>(branch->NewEntry());
 
+    entry->IsPU = candidate->IsPU;
     entry->Index = index;
     entry->NDF = ndf;
     entry->Sigma = sigma;
