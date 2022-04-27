@@ -124,8 +124,6 @@ void SimConverter::Loop(){
                 VtxTime->Fill(vdummy.time);
             }
 
-            vertices.push_back(vdummy);
-
             for(Int_t c=0; c < nTracksVtx; c++)
             {
                 SimConverter::simple_particle pdummyvtx;
@@ -176,6 +174,7 @@ void SimConverter::Loop(){
                 }
                 vtxparticles.push_back(pdummyvtx);
             }
+            vertices.push_back(vdummy);
         }
         n_inaccessible_particles->Fill(n_inacc);
         
@@ -214,7 +213,6 @@ void SimConverter::Loop(){
 
             tracks.push_back(tdummy);
         }
-
 
         for (Int_t i=0; i<branchParticle->GetEntriesFast(); i++){
             GenParticle *gen = (GenParticle*) branchParticle->At(i);
