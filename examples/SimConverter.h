@@ -35,6 +35,10 @@ class SimConverter
         UInt_t ndf;
         Float_t sumpt2;
         UInt_t nTracks;
+        std::vector<Float_t> trackX;
+        std::vector<Float_t> trackY;
+        std::vector<Float_t> trackZ;
+        std::vector<Int_t> trackID;
     };
     
     struct simple_track {

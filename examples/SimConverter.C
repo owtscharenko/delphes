@@ -22,7 +22,7 @@ void SimConverter::Loop(){
     SimConverter::simple_vertex vdummy;
     SimConverter::simple_track tdummy;
 
-    TString in_file = "/media/niko/big_data/delphes_output/delphes_100_pileup_50_smear.root";
+    TString in_file = "/media/niko/big_data/delphes_output/delphes_100_pileup_50.root";
     TChain chain("Delphes");
     chain.Add(in_file);
     ExRootTreeReader *treeReader = new ExRootTreeReader(&chain);
@@ -32,7 +32,7 @@ void SimConverter::Loop(){
     TClonesArray *branchVertex  = treeReader->UseBranch("Vertex");
     TClonesArray *branchTrack  = treeReader->UseBranch("Track");
 
-    TString out_file_name = "/media/niko/big_data/delphes_output/delphes_100_pileup_50_smear_convert.root";
+    TString out_file_name = "/media/niko/big_data/cernbox/delphes/delphes_100_pileup_50_convert.root";
     TFile *nfile = TFile::Open((out_file_name), "RECREATE");
     TTree *SimOut = new TTree("DelphesSim", "Simplified Delphes Output");
 
@@ -89,6 +89,11 @@ void SimConverter::Loop(){
         evnum = entry;
         for (Int_t i=0; i<branchVertex->GetEntriesFast(); i++)
         {
+            vdummy.trackX.clear();
+            vdummy.trackY.clear();
+            vdummy.trackZ.clear();
+            vdummy.trackID.clear();
+
             isPU = -1;
             vdummy.IsPU = -1;
             n_inacc = 0;
@@ -158,6 +163,17 @@ void SimConverter::Loop(){
                 GenVtxPosZ->Fill(pdummyvtx.z);
                 GenVtxTime->Fill(pdummyvtx.time);
 
+                // connect track particle with vtx. Find more elegant solution for future.
+                for (Int_t i=0; i<branchTrack->GetEntriesFast(); i++){
+                    Track *trk = (Track*) branchTrack->At(i);
+                    GenParticle* actual_track_particle = (GenParticle*)trk->Particle.GetObject();
+                    if (actual_track_particle==vtx_particle){
+                        vdummy.trackX.push_back(trk->X);
+                        vdummy.trackY.push_back(trk->Y);
+                        vdummy.trackZ.push_back(trk->Z);
+                        vdummy.trackID.push_back(i);
+                    }
+                }
                 vtxparticles.push_back(pdummyvtx);
             }
         }
