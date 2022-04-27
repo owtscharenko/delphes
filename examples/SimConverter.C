@@ -19,10 +19,11 @@ void SimConverter::Loop(){
     GenParticle *actual_particle;
     // GenParticle *actual_track_particle;
     
-    SimConverter::simple_vertex vdummy;
-    SimConverter::simple_track tdummy;
+    SimConverter::simple_vertex vdummy{};
+    SimConverter::simple_track tdummy{};
 
-    TString in_file = "/media/niko/big_data/delphes_output/delphes_100_pileup_50.root";
+    TString in_file = "/media/niko/big_data/delphes_output/delphes_100_pileup_50_dz_50cm_track_smearing.root";
+    // TString in_file = "/media/niko/big_data/delphes_output/delphes_1_pileup_0.root";
     TChain chain("Delphes");
     chain.Add(in_file);
     ExRootTreeReader *treeReader = new ExRootTreeReader(&chain);
@@ -32,15 +33,15 @@ void SimConverter::Loop(){
     TClonesArray *branchVertex  = treeReader->UseBranch("Vertex");
     TClonesArray *branchTrack  = treeReader->UseBranch("Track");
 
-    TString out_file_name = "/media/niko/big_data/cernbox/delphes/delphes_100_pileup_50_convert.root";
+    TString out_file_name = "/media/niko/big_data/cernbox/delphes/delphes_100_pileup_50_dz_50cm_track_smearing.root";
     TFile *nfile = TFile::Open((out_file_name), "RECREATE");
     TTree *SimOut = new TTree("DelphesSim", "Simplified Delphes Output");
 
-    std::vector<SimConverter::simple_vertex> vertices;
-    std::vector<SimConverter::simple_track> tracks;
-    std::vector<SimConverter::simple_particle> particles;
-    std::vector<SimConverter::simple_particle> vtxparticles;
-    // std::vector<SimConverter::simple_particle> trkparticles;
+    std::vector<SimConverter::simple_vertex> vertices{};
+    std::vector<SimConverter::simple_track> tracks{};
+    std::vector<SimConverter::simple_particle> particles{};
+    std::vector<SimConverter::simple_particle> vtxparticles{};
+    // std::vector<SimConverter::simple_particle> trkparticles{};
 
     SimOut->Branch("Vertex", &vertices);
     SimOut->Branch("Track", &tracks);
@@ -78,6 +79,13 @@ void SimConverter::Loop(){
     GenVtxPosZ = new TH1F("GenzVtx", "Z position of GenParticle", 100, -40,40);
     TH1F * GenVtxTime;
     GenVtxTime = new TH1F("GenTVtx", "relative time of GenParticle", 100, 0,0);
+
+    TH1F * TrackResX;
+    TrackResX = new TH1F("TrackResX", "X residual of GenPart - Track", 100, -5,5);
+    TH1F * TrackResY;
+    TrackResY = new TH1F("TrackResY", "Y  residual of GenPart - Track", 100, -5,5);
+    TH1F * TrackResZ;
+    TrackResZ = new TH1F("TrackResZ", "Z  residual of GenPart - Track", 100, -140,140);
 
     for(Int_t entry = 0; entry < numberOfEntries; ++entry) 
     {
@@ -126,7 +134,7 @@ void SimConverter::Loop(){
 
             for(Int_t c=0; c < nTracksVtx; c++)
             {
-                SimConverter::simple_particle pdummyvtx;
+                SimConverter::simple_particle pdummyvtx{};
                 pdummyvtx.vertexID.clear();
                 pdummyvtx.IsPU = -1;
                 vtx_particle = vtx->Constituents.At(c);
@@ -195,6 +203,8 @@ void SimConverter::Loop(){
             // tdummy.IsPU = trk->IsPU;
             tdummy.trackID = i;
             tdummy.vertexID = trk->VertexIndex;
+            tdummy.errorDZ = trk->ErrorDZ;
+            tdummy.errorD0 = trk->ErrorD0;
 
             GenParticle* actual_track_particle = (GenParticle*)trk->Particle.GetObject();
             if (actual_track_particle!=0){
@@ -212,11 +222,14 @@ void SimConverter::Loop(){
             }
 
             tracks.push_back(tdummy);
+            TrackResX->Fill(tdummy.GenX - tdummy.x);
+            TrackResY->Fill(tdummy.GenY - tdummy.y);
+            TrackResZ->Fill(tdummy.GenZ - tdummy.z);
         }
 
         for (Int_t i=0; i<branchParticle->GetEntriesFast(); i++){
             GenParticle *gen = (GenParticle*) branchParticle->At(i);
-            SimConverter::simple_particle pdummy;
+            SimConverter::simple_particle pdummy{};
             pdummy.vertexID.clear();
             pdummy.x = gen->X;
             pdummy.y = gen->Y;
@@ -255,6 +268,9 @@ void SimConverter::Loop(){
     GenVtxPosY->Write();
     GenVtxPosZ->Write();
     GenVtxTime->Write();
+    TrackResX->Write();
+    TrackResY->Write();
+    TrackResZ->Write();
 
     SimOut->Write();
     delete nfile;

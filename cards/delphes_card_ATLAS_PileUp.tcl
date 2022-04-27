@@ -16,6 +16,7 @@ set ExecutionPath {
   MuonMomentumSmearing
 
   TrackMerger
+  TrackSmearing
   Calorimeter
   ElectronFilter
   TrackPileUpSubtractor
@@ -74,7 +75,7 @@ module PileUpMerger PileUpMerger {
   set MeanPileUp 50
 
   # maximum spread in the beam direction in m
-  set ZVertexSpread 0.04
+  set ZVertexSpread 0.2
 
   # maximum spread in time in s
   set TVertexSpread 800E-12
@@ -227,13 +228,29 @@ module Merger TrackMerger {
   set OutputArray tracks
 }
 
+################################                                                                    
+# Track impact parameter smearing                                                                   
+################################                                                                    
+
+module TrackSmearing TrackSmearing {
+  set InputArray TrackMerger/tracks
+#  set BeamSpotInputArray BeamSpotFilter/beamSpotParticle
+  set OutputArray tracks
+  set ApplyToPileUp true
+
+  # magnetic field
+  set Bz 2.0
+
+  source ./trackResolutionATLAS.tcl
+}
+
 #############
 # Calorimeter
 #############
 
 module Calorimeter Calorimeter {
   set ParticleInputArray ParticlePropagator/stableParticles
-  set TrackInputArray TrackMerger/tracks
+  set TrackInputArray TrackSmearing/tracks
 
   set TowerOutputArray towers
   set PhotonOutputArray photons
@@ -353,7 +370,7 @@ module Merger NeutralTowerMerger {
 
 module Merger EFlowMergerAllTracks {
 # add InputArray InputArray
-  add InputArray TrackMerger/tracks
+  add InputArray TrackSmearing/tracks
   add InputArray Calorimeter/eflowPhotons
   add InputArray Calorimeter/eflowNeutralHadrons
   set OutputArray eflow
@@ -678,7 +695,7 @@ module TrackCountingTauTagging TauTagging {
  
   set ParticleInputArray Delphes/allParticles
   set PartonInputArray Delphes/partons
-  set TrackInputArray TrackMerger/tracks
+  set TrackInputArray TrackSmearing/tracks
   set JetInputArray JetEnergyScale/jets
 
   set DeltaR 0.2
@@ -731,7 +748,7 @@ module TreeWriter TreeWriter {
 # add Branch InputArray BranchName BranchClass
   add Branch Delphes/allParticles Particle GenParticle
 
-  add Branch TrackMerger/tracks Track Track
+  add Branch TrackSmearing/tracks Track Track
   add Branch Calorimeter/towers Tower Tower
 
 #  add Branch Calorimeter/eflowTracks EFlowTrack Track

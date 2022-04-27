@@ -56,7 +56,6 @@ class SimConverter
         Int_t trackID;
         Int_t vertexID;
         Int_t PID;
-        // Float_t errorP;
         Float_t GenX;
         Float_t GenY;
         Float_t GenZ;
@@ -68,9 +67,11 @@ class SimConverter
         Float_t GenEta;
         Float_t GenPhi;
         Int_t GenPID;
-        // Float_t errorPT;
-        // Float_t errorPhi;
-        // Float_t errorEta;
+        Float_t errorPT;
+        Float_t errorPhi;
+        Float_t errorEta;
+        Float_t errorDZ;
+        Float_t errorD0;
     };
 
     struct simple_particle{
