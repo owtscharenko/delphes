@@ -184,8 +184,8 @@ void SimConverter::Loop(){
             GenParticle* actual_track_particle = (GenParticle*)trk->Particle.GetObject();
             if (actual_track_particle!=0){
                 tdummy.GenX = actual_track_particle->X;
-                tdummy.GenX = actual_track_particle->Y;
-                tdummy.GenX = actual_track_particle->Z;
+                tdummy.GenY = actual_track_particle->Y;
+                tdummy.GenZ = actual_track_particle->Z;
                 tdummy.GenMass = actual_track_particle->Mass;
                 tdummy.GenCharge = actual_track_particle->Charge;
                 tdummy.GenP = actual_track_particle->P;
