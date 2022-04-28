@@ -14,13 +14,11 @@ void SimConverter::Loop(){
 
     Int_t evnum;
     Int_t n_inacc = 0;
+    Int_t empty_track = 0;
     Int_t isPU = -1;
     TObject *vtx_particle;
     GenParticle *actual_particle;
     // GenParticle *actual_track_particle;
-    
-    SimConverter::simple_vertex vdummy{};
-    SimConverter::simple_track tdummy{};
 
     TString in_file = "/media/niko/big_data/delphes_output/delphes_100_pileup_50_dz_50cm_track_smearing.root";
     // TString in_file = "/media/niko/big_data/delphes_output/delphes_1_pileup_0.root";
@@ -33,7 +31,7 @@ void SimConverter::Loop(){
     TClonesArray *branchVertex  = treeReader->UseBranch("Vertex");
     TClonesArray *branchTrack  = treeReader->UseBranch("Track");
 
-    TString out_file_name = "/media/niko/big_data/cernbox/delphes/delphes_100_pileup_50_dz_50cm_track_smearing.root";
+    TString out_file_name = "/media/niko/big_data/cernbox/delphes/delphes_100_pileup_50_dz_50cm_track_smearing_convert.root";
     TFile *nfile = TFile::Open((out_file_name), "RECREATE");
     TTree *SimOut = new TTree("DelphesSim", "Simplified Delphes Output");
 
@@ -52,6 +50,8 @@ void SimConverter::Loop(){
 
     TH1F * n_inaccessible_particles;
     n_inaccessible_particles = new TH1F("n_ghost", "Number of empty particle pointer per event", 100, 0,0);
+    TH1F * n_inaccessible_track_particles;
+    n_inaccessible_track_particles = new TH1F("n_ghost_track", "Number of empty track particle pointer per event", 100, 0,0);
     // pileup vertex
     TH1F * PUvtxPosX;
     PUvtxPosX = new TH1F("xPU", "X position of pileup vertices", 100, 0,0);
@@ -97,6 +97,7 @@ void SimConverter::Loop(){
         evnum = entry;
         for (Int_t i=0; i<branchVertex->GetEntriesFast(); i++)
         {
+            SimConverter::simple_vertex vdummy{};
             vdummy.trackX.clear();
             vdummy.trackY.clear();
             vdummy.trackZ.clear();
@@ -186,7 +187,10 @@ void SimConverter::Loop(){
         }
         n_inaccessible_particles->Fill(n_inacc);
         
+        empty_track = 0;
         for (Int_t i=0; i<branchTrack->GetEntriesFast(); i++){
+            
+            SimConverter::simple_track tdummy{};
             Track *trk = (Track*) branchTrack->At(i);
             tdummy.IsPU = -1;
             tdummy.x = trk->X;
@@ -220,12 +224,16 @@ void SimConverter::Loop(){
                 tdummy.GenTime = actual_track_particle->T;
                 tdummy.GenPID = actual_track_particle->PID;
             }
+            else {
+                empty_track +=1;
+            }
 
             tracks.push_back(tdummy);
             TrackResX->Fill(tdummy.GenX - tdummy.x);
             TrackResY->Fill(tdummy.GenY - tdummy.y);
             TrackResZ->Fill(tdummy.GenZ - tdummy.z);
         }
+        n_inaccessible_track_particles->Fill(empty_track);
 
         for (Int_t i=0; i<branchParticle->GetEntriesFast(); i++){
             GenParticle *gen = (GenParticle*) branchParticle->At(i);
@@ -256,6 +264,7 @@ void SimConverter::Loop(){
 
     }
     n_inaccessible_particles->Write();
+    n_inaccessible_track_particles->Write();
     PUvtxPosX->Write();
     PUvtxPosY->Write();
     PUvtxPosZ->Write();
