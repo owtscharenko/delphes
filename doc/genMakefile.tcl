@@ -345,17 +345,8 @@ endif
 $(NOFASTJET): $(DELPHES_DICT_OBJ) $(DELPHES_OBJ) $(TCL_OBJ)
 	@mkdir -p $(@D)
 	@echo ">> Building $@"
-ifeq ($(ARCH),aix5)
-	@$(MAKESHARED) $(OutPutOpt) $@ $(DELPHES_LIBS) -p 0 $^
-else
 ifeq ($(PLATFORM),macosx)
-# We need to make both the .dylib and the .so
 	@$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@ $(DELPHES_LIBS)
-ifneq ($(subst $(MACOSX_MINOR),,1234),1234)
-ifeq ($(MACOSX_MINOR),4)
-	@ln -sf $@ $(subst .$(DllSuf),.so,$@)
-endif
-endif
 else
 ifeq ($(PLATFORM),win32)
 	@bindexplib $* $^ > $*.def
@@ -364,25 +355,14 @@ ifeq ($(PLATFORM),win32)
 	@$(MT_DLL)
 else
 	@$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(OutPutOpt) $@ $(DELPHES_LIBS)
-	@$(MT_DLL)
-endif
 endif
 endif
 
 $(DELPHES): $(DELPHES_DICT_OBJ) $(FASTJET_DICT_OBJ) $(DELPHES_OBJ) $(FASTJET_OBJ) $(TCL_OBJ)
 	@mkdir -p $(@D)
 	@echo ">> Building $@"
-ifeq ($(ARCH),aix5)
-	@$(MAKESHARED) $(OutPutOpt) $@ $(DELPHES_LIBS) -p 0 $^
-else
 ifeq ($(PLATFORM),macosx)
-# We need to make both the .dylib and the .so
 	@$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@ $(DELPHES_LIBS)
-ifneq ($(subst $(MACOSX_MINOR),,1234),1234)
-ifeq ($(MACOSX_MINOR),4)
-	@ln -sf $@ $(subst .$(DllSuf),.so,$@)
-endif
-endif
 else
 ifeq ($(PLATFORM),win32)
 	@bindexplib $* $^ > $*.def
@@ -391,25 +371,14 @@ ifeq ($(PLATFORM),win32)
 	@$(MT_DLL)
 else
 	@$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(OutPutOpt) $@ $(DELPHES_LIBS)
-	@$(MT_DLL)
-endif
 endif
 endif
 
 $(DISPLAY): $(DELPHES_DICT_OBJ) $(FASTJET_DICT_OBJ) $(DISPLAY_DICT_OBJ) $(DELPHES_OBJ) $(FASTJET_OBJ) $(DISPLAY_OBJ) $(TCL_OBJ)
 	@mkdir -p $(@D)
 	@echo ">> Building $@"
-ifeq ($(ARCH),aix5)
-	@$(MAKESHARED) $(OutPutOpt) $@ $(DISPLAY_LIBS) -p 0 $^
-else
 ifeq ($(PLATFORM),macosx)
-# We need to make both the .dylib and the .so
 	@$(LD) $(SOFLAGS)$@ $(LDFLAGS) $^ $(OutPutOpt) $@ $(DISPLAY_LIBS)
-ifneq ($(subst $(MACOSX_MINOR),,1234),1234)
-ifeq ($(MACOSX_MINOR),4)
-	@ln -sf $@ $(subst .$(DllSuf),.so,$@)
-endif
-endif
 else
 ifeq ($(PLATFORM),win32)
 	@bindexplib $* $^ > $*.def
@@ -418,8 +387,6 @@ ifeq ($(PLATFORM),win32)
 	@$(MT_DLL)
 else
 	@$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(OutPutOpt) $@ $(DISPLAY_LIBS)
-	@$(MT_DLL)
-endif
 endif
 endif
 
@@ -433,7 +400,7 @@ distclean: clean
 dist:
 	@echo ">> Building $(DISTTAR)"
 	@mkdir -p $(DISTDIR)
-	@cp -a AUTHORS CHANGELOG CMakeLists.txt COPYING DelphesEnv.sh LICENSE NOTICE README README_4LHCb Makefile MinBias.pileup configure cards classes converters display doc examples external modules python readers validation $(DISTDIR)
+	@cp -a AUTHORS CHANGELOG CMakeLists.txt COPYING DelphesEnv.sh LICENSE NOTICE README README_4LHCb Makefile MinBias.pileup configure cards classes cmake converters display doc examples external modules python readers validation $(DISTDIR)
 	@find $(DISTDIR) -depth -name .\* -exec rm -rf {} \;
 	@tar -czf $(DISTTAR) $(DISTDIR)
 	@rm -rf $(DISTDIR)

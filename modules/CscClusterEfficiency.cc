@@ -16,19 +16,20 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** \class TimeSmearing
- *
- *  Performs time smearing.
- *
- *  \author M. Selvaggi - CERN
- *
- */
+ /** \class CscClusterEfficiency
+  *
+  *  This module is specific to the CMS paper searching for neutral LLPs in the CMS endcap muon detectors: https://arxiv.org/abs/2107.04838
+  *  It is implemented based on the ClusterEfficiency parameterization function provided in the HEPData entry of the paper: https://www.hepdata.net/record/104408
+  *
+  *  \author Christina Wang
+  *
+  */
 
-#include "modules/TimeSmearing.h"
+#include "modules/CscClusterEfficiency.h"
 
 #include "classes/DelphesClasses.h"
 #include "classes/DelphesFactory.h"
-#include "classes/DelphesFormula.h"
+#include "classes/DelphesCscClusterFormula.h"
 
 #include "ExRootAnalysis/ExRootClassifier.h"
 #include "ExRootAnalysis/ExRootFilter.h"
@@ -48,80 +49,67 @@
 #include <stdexcept>
 
 using namespace std;
+
 //------------------------------------------------------------------------------
 
-TimeSmearing::TimeSmearing() :
-  fItInputArray(0), fResolutionFormula(0)
+CscClusterEfficiency::CscClusterEfficiency() :
+  fFormula(0), fItInputArray(0)
 {
-	fResolutionFormula = new DelphesFormula;
+  fFormula = new DelphesCscClusterFormula;
 }
 
 //------------------------------------------------------------------------------
 
-TimeSmearing::~TimeSmearing()
+CscClusterEfficiency::~CscClusterEfficiency()
 {
-	if(fResolutionFormula) delete fResolutionFormula;
+  if(fFormula) delete fFormula;
 }
 
 //------------------------------------------------------------------------------
 
-void TimeSmearing::Init()
+void CscClusterEfficiency::Init()
 {
-  // read resolution formula
+  // read CscClusterEfficiency formula
+  fFormula->Compile(GetString("EfficiencyFormula", "1.0"));
 
-  // read time resolution formula in seconds
-  fResolutionFormula->Compile(GetString("TimeResolution", "30e-12"));
+  // import input array
 
-  // import track input array
-  fInputArray = ImportArray(GetString("InputArray", "MuonMomentumSmearing/muons"));
+  fInputArray = ImportArray(GetString("InputArray", "ParticlePropagator/stableParticles"));
   fItInputArray = fInputArray->MakeIterator();
 
-
   // create output array
-  fOutputArray = ExportArray(GetString("OutputArray", "tracks"));
+
+  fOutputArray = ExportArray(GetString("OutputArray", "stableParticles"));
 }
 
 //------------------------------------------------------------------------------
 
-void TimeSmearing::Finish()
+void CscClusterEfficiency::Finish()
 {
   if(fItInputArray) delete fItInputArray;
 }
 
 //------------------------------------------------------------------------------
 
-void TimeSmearing::Process()
+void CscClusterEfficiency::Process()
 {
-  Candidate *candidate, *mother;
-  Double_t tf_smeared, tf;
-  Double_t eta, energy;
-  Double_t timeResolution;
-
-  const Double_t c_light = 2.99792458E8;
+  Candidate *candidate;
+  Double_t Ehad, Eem, decayR, decayZ;
 
   fItInputArray->Reset();
   while((candidate = static_cast<Candidate *>(fItInputArray->Next())))
   {
+    const TLorentzVector &candidateDecayPosition = candidate->DecayPosition;
+    decayZ = abs(candidateDecayPosition.Z());
+    decayR = sqrt(pow(candidateDecayPosition.X(),2)+pow(candidateDecayPosition.Y(),2));
+    Ehad = candidate->Ehad;
+    Eem = candidate->Eem;
+    // apply an efficency formula
+    if(gRandom->Uniform() > fFormula->Eval(decayR, decayZ, Ehad, Eem)) continue;
 
-    const TLorentzVector &candidateFinalPosition = candidate->Position;
-    const TLorentzVector &candidateMomentum = candidate->Momentum;
 
-    tf = candidateFinalPosition.T() * 1.0E-3 / c_light;
-
-    eta = candidateMomentum.Eta();
-    energy = candidateMomentum.E();
-
-    // apply smearing formula
-    timeResolution = fResolutionFormula->Eval(0.0, eta, 0.0, energy);
-    tf_smeared = gRandom->Gaus(tf, timeResolution);
-
-    mother = candidate;
-    candidate = static_cast<Candidate *>(candidate->Clone());
-
-    candidate->Position.SetT(tf_smeared * 1.0E3 * c_light);
-    candidate->ErrorT = timeResolution * 1.0E3 * c_light;
-
-    candidate->AddCandidate(mother);
     fOutputArray->Add(candidate);
   }
 }
+
+//------------------------------------------------------------------------------

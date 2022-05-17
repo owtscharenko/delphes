@@ -16,37 +16,37 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TimeSmearing_h
-#define TimeSmearing_h
+#ifndef CscClusterEfficiency_h
+#define CscClusterEfficiency_h
 
-/** \class TimeSmearing
+
+
+/** \class CscClusterEfficiency
  *
- *  Performs time smearing.
+ *  This module is specific to the CMS paper searching for neutral LLPs in the CMS endcap muon detectors: https://arxiv.org/abs/2107.04838
+ *  It is implemented based on the ClusterEfficiency parameterization function provided in the HEPData entry of the paper: https://www.hepdata.net/record/104408
  *
- *  \author Michele Selvaggi - CERN
+ *  \author Christina Wang
  *
  */
-
 #include "classes/DelphesModule.h"
 
 class TIterator;
 class TObjArray;
-class DelphesFormula;
+class DelphesCscClusterFormula;
 
-class TimeSmearing: public DelphesModule
+class CscClusterEfficiency: public DelphesModule
 {
 public:
-  TimeSmearing();
-  ~TimeSmearing();
+  CscClusterEfficiency();
+  ~CscClusterEfficiency();
 
   void Init();
   void Process();
   void Finish();
 
 private:
-
-  DelphesFormula *fResolutionFormula;
-  Int_t fVertexTimeMode;
+  DelphesCscClusterFormula *fFormula; //!
 
   TIterator *fItInputArray; //!
 
@@ -54,7 +54,7 @@ private:
 
   TObjArray *fOutputArray; //!
 
-  ClassDef(TimeSmearing, 1)
+  ClassDef(CscClusterEfficiency, 1)
 };
 
 #endif

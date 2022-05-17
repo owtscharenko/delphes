@@ -157,6 +157,11 @@ public:
   Float_t Y; // particle vertex position (y component) | hepevt.vhep[number][1]
   Float_t Z; // particle vertex position (z component) | hepevt.vhep[number][2]
 
+  Float_t decayX;
+  Float_t decayY;
+  Float_t decayZ;
+  Float_t decayT;
+
   static CompBase *fgCompare; //!
   const CompBase *GetCompare() const { return fgCompare; }
 
@@ -458,6 +463,10 @@ public:
   Float_t Yd; // Y coordinate of point of closest approach to vertex
   Float_t Zd; // Z coordinate of point of closest approach to vertex
 
+  Float_t XFirstHit; // X coordinate of point of closest approach to vertex
+  Float_t YFirstHit; // Y coordinate of point of closest approach to vertex
+  Float_t ZFirstHit; // Z coordinate of point of closest approach to vertex
+
   Float_t L; // track path length
   Float_t D0; // track transverse impact parameter
   Float_t DZ; // track longitudinal impact parameter
@@ -515,6 +524,7 @@ public:
 
   Float_t Eem; // calorimeter tower electromagnetic energy
   Float_t Ehad; // calorimeter tower hadronic energy
+  Float_t Etrk; // total charged energy hitting tower
 
   Float_t Edges[4]; // calorimeter tower edges
 
@@ -525,7 +535,7 @@ public:
 
   TLorentzVector P4() const;
 
-  ClassDef(Tower, 2)
+  ClassDef(Tower, 3)
 };
 
 //---------------------------------------------------------------------------
@@ -563,6 +573,10 @@ public:
   Float_t Xd; // X coordinate of point of closest approach to vertex
   Float_t Yd; // Y coordinate of point of closest approach to vertex
   Float_t Zd; // Z coordinate of point of closest approach to vertex
+
+  Float_t XFirstHit; // X coordinate of point of closest approach to vertex
+  Float_t YFirstHit; // Y coordinate of point of closest approach to vertex
+  Float_t ZFirstHit; // Z coordinate of point of closest approach to vertex
 
   Float_t L; // track path length
   Float_t D0; // track transverse impact parameter
@@ -604,12 +618,13 @@ public:
 
   Float_t Eem; // calorimeter tower electromagnetic energy
   Float_t Ehad; // calorimeter tower hadronic energy
+  Float_t Etrk; // total charged energy hitting tower
 
   Float_t Edges[4]; // calorimeter tower edges
 
   TRefArray Particles; // references to generated particles
 
-  ClassDef(ParticleFlowCandidate, 2)
+  ClassDef(ParticleFlowCandidate, 3)
 
 };
 
@@ -635,6 +650,35 @@ public:
   const CompBase *GetCompare() const { return fgCompare; }
 
   ClassDef(HectorHit, 1)
+};
+//---------------------------------------------------------------------------
+
+class CscCluster: public SortableObject
+{
+public:
+  Float_t Eta; // eta of LLP
+  Float_t Phi; // phi of LLP
+  Float_t PT; // pt of LLP
+  Float_t Px;// px of LLP
+  Float_t Py;// py of LLP
+  Float_t Pz;// pz of LLP
+  Float_t E; // E of LLP
+  Float_t Ehad; // had energy of LLP
+  Float_t Eem; // em energy of LLP
+  Float_t pid; // LLP pid
+  Float_t T; // LLP decay time-photon travel time
+  Float_t X; // LLP decay x
+  Float_t Y; //  LLP decay y
+  Float_t Z; //  LLP decay z
+  Float_t R; //  LLP decay z
+  Float_t beta; // LLP beta
+  Float_t ctau; //LLP ctau
+
+
+  static CompBase *fgCompare; //!
+  const CompBase *GetCompare() const { return fgCompare; }
+
+  ClassDef(CscCluster, 5)
 };
 
 //---------------------------------------------------------------------------
@@ -674,12 +718,13 @@ public:
 
   Float_t Eem;
   Float_t Ehad;
+  Float_t Etrk;
 
   Float_t Edges[4];
   Float_t DeltaEta;
   Float_t DeltaPhi;
 
-  TLorentzVector Momentum, Position, InitialPosition, PositionError, Area;
+  TLorentzVector Momentum, Position, InitialPosition, PositionError, DecayPosition, Area;
 
   Float_t L; // path length
   Float_t DZ;
@@ -704,6 +749,10 @@ public:
   Float_t Xd;
   Float_t Yd;
   Float_t Zd;
+
+  Float_t XFirstHit;
+  Float_t YFirstHit;
+  Float_t ZFirstHit;
 
   // tracking resolution
 

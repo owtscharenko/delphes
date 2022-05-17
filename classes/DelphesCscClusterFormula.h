@@ -16,45 +16,25 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TimeSmearing_h
-#define TimeSmearing_h
+#ifndef DelphesCscClusterFormula_h
+#define DelphesCscClusterFormula_h
 
-/** \class TimeSmearing
- *
- *  Performs time smearing.
- *
- *  \author Michele Selvaggi - CERN
- *
- */
+#include "TFormula.h"
 
-#include "classes/DelphesModule.h"
+class Candidate;
 
-class TIterator;
-class TObjArray;
-class DelphesFormula;
-
-class TimeSmearing: public DelphesModule
+class DelphesCscClusterFormula: public TFormula
 {
 public:
-  TimeSmearing();
-  ~TimeSmearing();
+  DelphesCscClusterFormula();
 
-  void Init();
-  void Process();
-  void Finish();
+  DelphesCscClusterFormula(const char *name, const char *expression);
 
-private:
+  ~DelphesCscClusterFormula();
 
-  DelphesFormula *fResolutionFormula;
-  Int_t fVertexTimeMode;
+  Int_t Compile(const char *expression);
 
-  TIterator *fItInputArray; //!
-
-  const TObjArray *fInputArray; //!
-
-  TObjArray *fOutputArray; //!
-
-  ClassDef(TimeSmearing, 1)
+  Double_t Eval(Double_t deltaR, Double_t deltaZ = 0, Double_t Ehad = 0, Double_t Eem = 0);
 };
 
-#endif
+#endif /* DelphesCscClusterFormula_h */
