@@ -81,11 +81,11 @@ void SimConverter::Loop(){
     GenVtxTime = new TH1F("GenTVtx", "relative time of GenParticle", 100, 0,0);
 
     TH1F * TrackResX;
-    TrackResX = new TH1F("TrackResX", "X residual of GenPart - Track", 100, -5,5);
+    TrackResX = new TH1F("TrackResX", "X residual of GenPart - Track", 100, -0,0);
     TH1F * TrackResY;
-    TrackResY = new TH1F("TrackResY", "Y  residual of GenPart - Track", 100, -5,5);
+    TrackResY = new TH1F("TrackResY", "Y  residual of GenPart - Track", 100, -0, 0);
     TH1F * TrackResZ;
-    TrackResZ = new TH1F("TrackResZ", "Z  residual of GenPart - Track", 100, -140,140);
+    TrackResZ = new TH1F("TrackResZ", "Z  residual of GenPart - Track", 100, -0,0);
 
     for(Int_t entry = 0; entry < numberOfEntries; ++entry) 
     {
