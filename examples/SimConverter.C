@@ -174,7 +174,7 @@ void SimConverter::Loop(){
                 for (Int_t i=0; i<branchTrack->GetEntriesFast(); i++){
                     Track *trk = (Track*) branchTrack->At(i);
                     GenParticle* actual_track_particle = (GenParticle*)trk->Particle.GetObject();
-                    if (actual_track_particle==vtx_particle){
+                    if (actual_track_particle==actual_particle){
                         vdummy.trackX.push_back(trk->X);
                         vdummy.trackY.push_back(trk->Y);
                         vdummy.trackZ.push_back(trk->Z);
