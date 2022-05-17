@@ -174,11 +174,15 @@ void SimConverter::Loop(){
                 for (Int_t i=0; i<branchTrack->GetEntriesFast(); i++){
                     Track *trk = (Track*) branchTrack->At(i);
                     GenParticle* actual_track_particle = (GenParticle*)trk->Particle.GetObject();
-                    if (actual_track_particle==actual_particle){
-                        vdummy.trackX.push_back(trk->X);
-                        vdummy.trackY.push_back(trk->Y);
-                        vdummy.trackZ.push_back(trk->Z);
-                        vdummy.trackID.push_back(i);
+                    // TODO : Very dirty and dubious check whether same particle is found.
+                    if (actual_track_particle!=0){
+                        if ((actual_particle->Px == actual_track_particle->Px) & (actual_particle->Py == actual_track_particle->Py) & (actual_particle->Pz == actual_track_particle->Pz) ) 
+                        {
+                            vdummy.trackX.push_back(trk->X);
+                            vdummy.trackY.push_back(trk->Y);
+                            vdummy.trackZ.push_back(trk->Z);
+                            vdummy.trackID.push_back(i);
+                        }
                     }
                 }
                 vtxparticles.push_back(pdummyvtx);
